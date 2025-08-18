@@ -17,6 +17,18 @@ export const propertyApi = createApi({
     }),
   }),
 });
+export const propertytotal = createApi({
+  reducerPath: 'propertytotal',
+  keepUnusedDataFor: 0,
+  baseQuery: fetchBaseQuery({ baseUrl: `http://${ip}:3000/api/v1/` }),
+  endpoints: (builder) => ({
+    getPropertiestotal: builder.query<Property[], number>({
+      
+      query: () => 'properties?limit=100',
+      transformResponse: (response: { items: Property[] }) => response.items,
+    }),
+  }),
+});
 
 
 interface FirebaseState {
@@ -41,7 +53,7 @@ export const { setFavs } = firebaseSlice.actions;
 export default firebaseSlice.reducer;
 
 
-
+export const { useGetPropertiestotalQuery } = propertytotal;
 
 
 

@@ -68,6 +68,16 @@ export default function AppLayout() {
           
         }}
       />
+      <Tabs.Screen 
+        name="rechstore"
+        options={{href: null,//
+          title: "rechstore",
+          tabBarIcon: ({ color, size }) => (
+           <Entypo name="log-out" size={24} color="black" />
+          ),
+          
+        }}
+      />
        <Tabs.Screen
         name="explore"
         options={{href: null,
