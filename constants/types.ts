@@ -7,7 +7,7 @@ export type User = {
  
   name: string;
   address: Address;
-  age: Date;
+  age: string;
   email: string;
   image:string
 };

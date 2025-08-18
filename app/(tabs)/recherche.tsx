@@ -5,9 +5,15 @@ import {
   TextInput,
   View,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
+const PRIMARY_COLOR = '#03215F';
+const SECONDARY_COLOR = '#4E8CFF';
+const LIGHT_GRAY = '#F5F5F5';
 import { Property } from '@/constants/types';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -16,18 +22,16 @@ import { actionCreators, initialState, reducer } from '../../components/context/
 import { PropertyCard } from '../../components/context/propertycard';
 import Ip from '../id';
 
-export default function App() {
+export default function PropertySearchScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
-
   const ip = Ip();
 
   const [fullData, setFullData] = useState<Property[]>([]);
   const [data, setData] = useState<Property[]>([]);
-
   const [title, setTitle] = useState("");
 
   const [priceFilter, setPriceFilter] = useState<number | null>(null);
-  const [addressFilter, setAddressFilter] = useState<string>("all");
+  const [cityFilter, setCityFilter] = useState<string>("all");
   const [bedroomFilter, setBedroomFilter] = useState<number | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
@@ -36,7 +40,7 @@ export default function App() {
   const applyFilters = (
     query: string,
     price: number | null,
-    address: string,
+    city: string,
     bedroom: number | null,
     type: string
   ) => {
@@ -55,9 +59,9 @@ export default function App() {
       );
     }
 
-    if (address !== "all") {
+    if (city !== "all") {
       filtered = filter(filtered, (property: Property) =>
-        property.city.toLowerCase().includes(address.toLowerCase())
+        property.city.toLowerCase().includes(city.toLowerCase())
       );
     }
 
@@ -76,7 +80,7 @@ export default function App() {
     setData(filtered);
   };
 
-  const SearchBar = (query: string) => {
+  const handleSearch = (query: string) => {
     setTitle(query);
   };
 
@@ -84,8 +88,8 @@ export default function App() {
     setPriceFilter(value);
   };
 
-  const onAddressChange = (value: string) => {
-    setAddressFilter(value);
+  const onCityChange = (value: string) => {
+    setCityFilter(value);
   };
 
   const onBedroomChange = (value: number | null) => {
@@ -97,247 +101,293 @@ export default function App() {
   };
 
   const onApplyFilters = () => {
-    applyFilters(title, priceFilter, addressFilter, bedroomFilter, typeFilter);
+    applyFilters(title, priceFilter, cityFilter, bedroomFilter, typeFilter);
     setShowFilters(false);
   };
 
+  const resetSearch = () => {
+    setTitle('');
+    setData(fullData);
+  };
+
   useEffect(() => {
-    async function fetchPosts() {
+    async function fetchProperties() {
       dispatch(actionCreators.loading());
       try {
         const response = await fetch(`http://${ip}:3000/api/v1/properties?limit=100`);
         const json = await response.json();
         setFullData(json.items);
-        
+        setData(json.items);
         dispatch(actionCreators.success(json.items));
       } catch (e) {
         dispatch(actionCreators.failure());
       }
     }
-    fetchPosts();
+    fetchProperties();
   }, []);
 
   const { loading, error } = state;
 
   return (
     
-    <View style={{ flex: 1, padding: 10 }}>
-      <Text style={{fontWeight: 'bold', color: 'black', fontSize: 25, marginVertical: 20, marginTop: 40, textAlign: 'left' }}>recchercher votre propriété</Text>
+     
+        <View style={styles.container}>
+       
+          <View style={styles.header}>
+            <Text style={styles.title}>Find Your Property</Text>
+            <Text style={styles.subtitle}>Discover your dream home</Text>
+          </View>
 
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search by title"
-          value={title}
-          style={styles.searchInput}
-          onChangeText={SearchBar}
-          clearButtonMode="always"
-        />
-        {title.length > 0 && (
-          <TouchableOpacity
-            onPress={() => {
-              setTitle('');
-              setData(fullData);
-            }}
-          >
-            <AntDesign name="closecircle" size={20} color="gray" />
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          onPress={() => setShowFilters(!showFilters)}
-          style={{ marginLeft: 10 }}
-        >
-          <Ionicons name="filter" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
-
-      {showFilters && (
-        <View style={{ marginTop: 10 }}>
-          <Text style={styles.filterTitle}>Prix</Text>
-          <View style={styles.filterRow}>
-            <TouchableOpacity
-              style={[styles.filterButton, priceFilter === 1000 && styles.activeFilter]}
-              onPress={() => onPriceChange(1000)}
+       
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+            <TextInput
+              placeholder="Search by title..."
+              placeholderTextColor="#999"
+              value={title}
+              style={styles.searchInput}
+              onChangeText={handleSearch}
+              clearButtonMode="while-editing"
+            />
+            {title.length > 0 && (
+              <TouchableOpacity onPress={resetSearch}>
+                <AntDesign name="closecircle" size={18} color="#999" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity 
+              onPress={() => setShowFilters(!showFilters)} 
+              style={styles.filterButton}
             >
-              <Text>≤ 1000$</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, priceFilter === 3000 && styles.activeFilter]}
-              onPress={() => onPriceChange(3000)}
-            >
-              <Text>≤ 3000$</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, priceFilter === 5000 && styles.activeFilter]}
-              onPress={() => onPriceChange(5000)}
-            >
-              <Text>≤ 5000$</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, priceFilter === null && styles.activeFilter]}
-              onPress={() => onPriceChange(null)}
-            >
-              <Text>Tout</Text>
+              <Ionicons name="filter" size={20} color={PRIMARY_COLOR} />
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.filterTitle}>Ville</Text>
-          <View style={styles.filterRow}>
-            <TouchableOpacity
-              style={[styles.filterButton, addressFilter === "tunis" && styles.activeFilter]}
-              onPress={() => onAddressChange("tunis")}
-            >
-              <Text>Tunis</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, addressFilter === "sfax" && styles.activeFilter]}
-              onPress={() => onAddressChange("sfax")}
-            >
-              <Text>Sfax</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, addressFilter === "sousse" && styles.activeFilter]}
-              onPress={() => onAddressChange("sousse")}
-            >
-              <Text>Sousse</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, addressFilter === "all" && styles.activeFilter]}
-              onPress={() => onAddressChange("all")}
-            >
-              <Text>Toutes</Text>
-            </TouchableOpacity>
-          </View>
+   
+          {showFilters && (
+            <View style={styles.filtersContainer}>
+              <Text style={styles.filterTitle}>Price</Text>
+              <View style={styles.filterRow}>
+                {[1000, 3000, 5000, null].map((price) => (
+                  <TouchableOpacity
+                    key={price || 'all'}
+                    style={[
+                      styles.filterOption,
+                      priceFilter === price && styles.activeFilterOption
+                    ]}
+                    onPress={() => onPriceChange(price)}
+                  >
+                    <Text style={[
+                      styles.filterOptionText,
+                      priceFilter === price && styles.activeFilterOptionText
+                    ]}>
+                      {price ? `≤ $${price}` : 'All'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-          <Text style={styles.filterTitle}>Chambres</Text>
-          <View style={styles.filterRow}>
-            <TouchableOpacity
-              style={[styles.filterButton, bedroomFilter === 1 && styles.activeFilter]}
-              onPress={() => onBedroomChange(1)}
-            >
-              <Text>1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, bedroomFilter === 2 && styles.activeFilter]}
-              onPress={() => onBedroomChange(2)}
-            >
-              <Text>2</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, bedroomFilter === 3 && styles.activeFilter]}
-              onPress={() => onBedroomChange(3)}
-            >
-              <Text>3</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, bedroomFilter === null && styles.activeFilter]}
-              onPress={() => onBedroomChange(null)}
-            >
-              <Text>Tout</Text>
-            </TouchableOpacity>
-          </View>
+              <Text style={styles.filterTitle}>City</Text>
+              <View style={styles.filterRow}>
+                {['tunis', 'sfax', 'sousse', 'all'].map((city) => (
+                  <TouchableOpacity
+                    key={city}
+                    style={[
+                      styles.filterOption,
+                      cityFilter === city && styles.activeFilterOption
+                    ]}
+                    onPress={() => onCityChange(city)}
+                  >
+                    <Text style={[
+                      styles.filterOptionText,
+                      cityFilter === city && styles.activeFilterOptionText
+                    ]}>
+                      {city === 'all' ? 'All' : city.charAt(0).toUpperCase() + city.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-          <Text style={styles.filterTitle}>Type</Text>
-          <View style={styles.filterRow}>
-            <TouchableOpacity
-              style={[styles.filterButton, typeFilter === "apartment" && styles.activeFilter]}
-              onPress={() => onTypeChange("apartment")}
-            >
-              <Text>Appartement</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, typeFilter === "house" && styles.activeFilter]}
-              onPress={() => onTypeChange("house")}
-            >
-              <Text>Maison</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, typeFilter === "villa" && styles.activeFilter]}
-              onPress={() => onTypeChange("villa")}
-            >
-              <Text>Villa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.filterButton, typeFilter === "all" && styles.activeFilter]}
-              onPress={() => onTypeChange("all")}
-            >
-              <Text>Tout</Text>
-            </TouchableOpacity>
-          </View>
+              <Text style={styles.filterTitle}>Bedrooms</Text>
+              <View style={styles.filterRow}>
+                {[1, 2, 3, null].map((bedroom) => (
+                  <TouchableOpacity
+                    key={bedroom || 'all'}
+                    style={[
+                      styles.filterOption,
+                      bedroomFilter === bedroom && styles.activeFilterOption
+                    ]}
+                    onPress={() => onBedroomChange(bedroom)}
+                  >
+                    <Text style={[
+                      styles.filterOptionText,
+                      bedroomFilter === bedroom && styles.activeFilterOptionText
+                    ]}>
+                      {bedroom || 'All'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-          <TouchableOpacity
-            style={styles.applyButton}
-            onPress={onApplyFilters}
-          >
-            <Text style={styles.applyButtonText}>Rechercher</Text>
-          </TouchableOpacity>
+              <Text style={styles.filterTitle}>Type</Text>
+              <View style={styles.filterRow}>
+                {['apartment', 'house', 'villa', 'all'].map((type) => (
+                  <TouchableOpacity
+                    key={type}
+                    style={[
+                      styles.filterOption,
+                      typeFilter === type && styles.activeFilterOption
+                    ]}
+                    onPress={() => onTypeChange(type)}
+                  >
+                    <Text style={[
+                      styles.filterOptionText,
+                      typeFilter === type && styles.activeFilterOptionText
+                    ]}>
+                      {type === 'apartment' ? 'Apartment' : 
+                       type === 'house' ? 'House' :
+                       type === 'villa' ? 'Villa' : 'All'}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <TouchableOpacity
+                style={styles.applyButton}
+                onPress={onApplyFilters}
+              >
+                <Text style={styles.applyButtonText}>Apply Filters</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+       
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.propertyCard}>
+                <PropertyCard item={item} />
+              </View>
+            )}
+            
+            contentContainerStyle={styles.propertyList}
+          />
         </View>
-      )}
-
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PropertyCard item={item} />}
-        style={{ marginTop: 10 }}
-      />
-    </View>
+    
+   
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFF',
+  },
+  gradient: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    padding: 16,
+    paddingBottom: 32,
+  },
+  header: {
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: PRIMARY_COLOR,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginLeft:10,
-    marginRight:10,
-   
-  
-    borderWidth: 1,
-    borderColor: 'black',
-    shadowColor: 'black',
-   
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  searchIcon: {
+    marginRight: 12,
   },
   searchInput: {
     flex: 1,
-    height: 40
+    fontSize: 16,
+    color: '#333',
+    paddingVertical: 0,
+  },
+  filterButton: {
+    marginLeft: 12,
+    padding: 4,
+  },
+  filtersContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  filterTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: PRIMARY_COLOR,
+    marginBottom: 8,
   },
   filterRow: {
     flexDirection: 'row',
-    marginTop: 5,
-    marginBottom: 10,
     flexWrap: 'wrap',
+    marginBottom: 16,
   },
-  filterButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: "#eee",
-    borderRadius: 6,
+  filterOption: {
+    backgroundColor: LIGHT_GRAY,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     marginRight: 8,
     marginBottom: 8,
   },
-  activeFilter: {
-    backgroundColor: "#ddd",
-    borderWidth: 1,
-    borderColor: "black"
+  activeFilterOption: {
+    backgroundColor: PRIMARY_COLOR,
   },
-  filterTitle: {
-    marginTop: 10,
-    fontWeight: 'bold'
+  filterOptionText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  activeFilterOptionText: {
+    color: '#FFF',
   },
   applyButton: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 12,
-    borderRadius: 25,
+    backgroundColor: PRIMARY_COLOR,
+    borderRadius: 10,
+    paddingVertical: 14,
     alignItems: 'center',
-    marginTop: 10,
-    marginHorizontal: 20,
+    marginTop: 8,
   },
   applyButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: '#FFF',
+    fontWeight: '600',
     fontSize: 16,
+  },
+  propertyList: {
+    paddingBottom: 24,
+  },
+  propertyCard: {
+    marginBottom: 16,
   },
 });

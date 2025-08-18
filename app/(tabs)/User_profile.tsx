@@ -1,103 +1,178 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSession } from '@/components/context/ctx';
 import useGetData from "@/app/users/get";
 import { User } from '@/constants/types';
 
+const PRIMARY_COLOR = '#03215F';
+const SECONDARY_COLOR = '#4E8CFF';
+const LIGHT_BACKGROUND = 'rgba(3, 33, 95, 0.1)';
+
 export default function UserProfile() {
   const { session, isLoading, signOut } = useSession();
   const data: User[] = useGetData("users", "user");
-
   const user = data.length > 0 ? data[0] : null;
 
   return (
     <View style={styles.container}>
-      <View style={styles.cardWrapper}>
-        <ImageBackground
-          source={require('@/assets/images/homee.jpg')}
-          style={styles.cardBackground}
-          imageStyle={{ borderRadius: 20 }}
-          blurRadius={3}
-        >
-          <View style={styles.cardContent}>
-            <View style={styles.imageWrapper}>
+      
+        <View style={styles.card}>
+          <ImageBackground
+            source={require('@/assets/images/homee.jpg')}
+            style={styles.headerBackground}
+            imageStyle={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+            blurRadius={2}
+          >
+            <View style={styles.headerOverlay} />
+          </ImageBackground>
+
+          <View style={styles.profileContainer}>
+            <View style={styles.avatarContainer}>
               {user?.image ? (
-                <Image source={{ uri: user.image }} style={styles.profileImage} />
+                <Image source={{ uri: user.image }} style={styles.avatar} />
               ) : (
-                <Ionicons name="person-circle-outline" size={120} color="#fff" />
+                <View style={styles.avatarPlaceholder}>
+                  <Ionicons name="person" size={50} color={PRIMARY_COLOR} />
+                </View>
               )}
             </View>
 
-            <Text style={styles.title}>{user?.name || "Utilisateur"}</Text>
-            <Text style={styles.subtitle}>{user?.email || "Email non disponible"}</Text>
+            <Text style={styles.name}>{user?.name || "Utilisateur"}</Text>
+            <Text style={styles.email}>{user?.email || "Email non disponible"}</Text>
 
-            <View style={styles.info}>
-              <View style={styles.ligne}>
-                <Ionicons name="location-outline" size={22} color="#fff" />
-                <Text style={styles.label}>{user?.address?.info || "Adresse non disponible"}</Text>
+            <View style={styles.infoContainer}>
+              <View style={styles.infoItem}>
+                <Ionicons name="location" size={20} color={PRIMARY_COLOR} />
+                <Text style={styles.infoText}>{user?.address?.info || "Adresse non disponible"}</Text>
               </View>
-              <View style={styles.ligne}>
-                <Ionicons name="calendar-outline" size={22} color="#fff" />
-                <Text style={styles.label}>{user?.age ? new Date(user.age).toLocaleDateString() : "Non disponible"}</Text>
+
+              <View style={styles.infoItem}>
+                <Ionicons name="calendar" size={20} color={PRIMARY_COLOR} />
+                <Text style={styles.infoText}>
+                  {user?.age || "Age non disponible"}
+                </Text>
               </View>
             </View>
 
             <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
-              <Ionicons name="exit-outline" size={22} color="#fff" />
-              <Text style={styles.signOutText}>Sign Out</Text>
+              <Ionicons name="log-out" size={20} color="#FFF" />
+              <Text style={styles.signOutText}>Se déconnecter</Text>
             </TouchableOpacity>
           </View>
-        </ImageBackground>
-      </View>
+        </View>
+   
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0' },
-  cardWrapper: { width: '90%' },
-  cardBackground: {
-    width: '100%',
-    borderRadius: 20,
-  },
-  cardContent: {
-    paddingVertical: 30,
-    paddingHorizontal: 25,
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 253, 253, 0)',
-    borderRadius: 20,
+    padding: 20,
   },
-  imageWrapper: {
-    marginTop: -80,
-    marginBottom: 15,
-    borderRadius: 70,
-    borderWidth: 3,
-    borderColor: '#fff',
+ 
+  card: {
+    width: '100%',
+    backgroundColor: '#FFF',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
     overflow: 'hidden',
   },
-  profileImage: { width: 140, height: 140, borderRadius: 70 },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
-  subtitle: { fontSize: 16, color: 'white', marginBottom: 20 },
-  info: { width: '100%', marginVertical: 15 },
-  ligne: {
+  headerBackground: {
+    height: 150,
+    width: '100%',
+  },
+  headerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(3, 33, 95, 0.4)',
+  },
+  profileContainer: {
+    padding: 20,
+    alignItems: 'center',
+    marginTop: -60,
+  },
+  avatarContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#FFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 15,
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 60,
+  },
+  avatarPlaceholder: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 60,
+    backgroundColor: LIGHT_BACKGROUND,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: PRIMARY_COLOR,
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  email: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  infoContainer: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 15, 15, 0.36)',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: LIGHT_BACKGROUND,
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
   },
-  label: { color: '#fff', fontSize: 16, marginLeft: 10 },
+  infoText: {
+    fontSize: 16,
+    color: PRIMARY_COLOR,
+    marginLeft: 10,
+  },
   signOutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1027f2ff',
+    backgroundColor: PRIMARY_COLOR,
     paddingVertical: 12,
-    paddingHorizontal: 25,
+    paddingHorizontal: 30,
     borderRadius: 25,
-    marginTop: 20,
+    marginTop: 10,
   },
-  signOutText: { color: '#fff', fontWeight: 'bold', fontSize: 16, marginLeft: 10 },
+  signOutText: {
+    color: '#FFF',
+    fontWeight: '600',
+    fontSize: 16,
+    marginLeft: 10,
+  },
 });

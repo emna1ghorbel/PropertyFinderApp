@@ -83,7 +83,7 @@ export default function SignUp() {
           name, 
           address, 
           email, 
-          age: birthDate, 
+          age: String(2025-birthDate.getFullYear()), 
           image: image ?? "" 
         };
         setuser("users", userCredential.uid, "user", newUser);

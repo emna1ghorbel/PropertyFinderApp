@@ -46,7 +46,7 @@ export default function App2() {
 
   const { data, error, isLoading } = useGetPropertiesQuery(page, {
     refetchOnMountOrArgChange: true,
-  });
+  });//data mn store 
 
   const data2: User[] = useGetData("users", "user");//info user
 // fav store
