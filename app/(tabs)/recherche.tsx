@@ -1,26 +1,23 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import {
-  FlatList,
-  Text,
-  TextInput,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-
-const PRIMARY_COLOR = '#03215F';
-const SECONDARY_COLOR = '#4E8CFF';
-const LIGHT_GRAY = '#F5F5F5';
 import { Property } from '@/constants/types';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import filter from 'lodash.filter';
+import React, { useEffect, useReducer, useState } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { actionCreators, initialState, reducer } from '../../components/context/property';
 import { PropertyCard } from '../../components/context/propertycard';
 import Ip from '../id';
+
+const PRIMARY_COLOR = '#03215F';
+const SECONDARY_COLOR = '#4E8CFF';
+const LIGHT_GRAY = '#F5F5F5';
 
 export default function PropertySearchScreen() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -80,9 +77,18 @@ export default function PropertySearchScreen() {
     setData(filtered);
   };
 
-  const handleSearch = (query: string) => {
-    setTitle(query);
-  };
+ 
+   const handleSearch = (query: string) => {
+     setTitle(query);
+     
+     
+     
+       const filteredData = filter(fullData, (property: Property) =>
+         property.title.toLowerCase().includes(query.toLowerCase())
+      );
+       setData(filteredData);
+     }
+   ;
 
   const onPriceChange = (value: number | null) => {
     setPriceFilter(value);
@@ -117,7 +123,7 @@ export default function PropertySearchScreen() {
         const response = await fetch(`http://${ip}:3000/api/v1/properties?limit=100`);
         const json = await response.json();
         setFullData(json.items);
-        setData(json.items);
+        
         dispatch(actionCreators.success(json.items));
       } catch (e) {
         dispatch(actionCreators.failure());
