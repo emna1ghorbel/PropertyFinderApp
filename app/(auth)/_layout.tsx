@@ -1,18 +1,14 @@
-import { Stack } from 'expo-router';
-
-
+import { Stack } from "expo-router";
+import { useTheme } from '@react-navigation/native';
 
 export default function AuthLayout() {
+  const { colors } = useTheme();
+  
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-      <Stack.Screen
-        name="signin"
-        options={{
-          presentation: 'modal',
-        }}
-      />
-        <Stack.Screen name="signup" />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" options={{ title: "Welcome" }} />
+      <Stack.Screen name="signin" options={{ title: "Sign In" }} />
+      <Stack.Screen name="signup" options={{ title: "Create Account" }} />
     </Stack>
   );
 }

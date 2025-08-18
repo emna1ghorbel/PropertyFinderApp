@@ -1,20 +1,39 @@
-import { useEffect } from 'react';
-import { default as AppLayout, default as AuthLayout } from './(auth)/_layout';
-import { SessionProvider, useSession } from './ctx';
-export default function RootLayout() {
-  //return <Slot />;
-    const { session, isLoading, isAuthenticated } = useSession();
-useEffect(() => {
-console.log('Session changed:', session);
-}, [isAuthenticated, session]);
-console.log('isAuthenticated:', isAuthenticated);
+import { Stack, } from 'expo-router';
+import { Text, View } from 'react-native';
+
+import { SessionProvider, useSession } from '../components/context/ctx';
+import { SplashScreenController } from '../components/context/splash';
+
+export default function Root() {
   return (
     <SessionProvider>
-      {!isAuthenticated ? (
-        <AuthLayout />
-      ) : (
-        <AppLayout />
-      )}
+      
+      <SplashScreenController />
+      <RootNavigator />
     </SessionProvider>
-  )
+  );
+}
+
+function RootNavigator() {
+  const { session ,isLoading} = useSession();
+ console.log('session',session)
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isLoading}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Loading...</Text>
+        </View>
+      </Stack.Protected>
+      
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+      
+      
+
+    </Stack>
+  );
 }

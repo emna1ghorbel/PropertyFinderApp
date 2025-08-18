@@ -1,13 +1,8 @@
+
+
 import { initializeApp } from 'firebase/app';
-
-// Optionally import the services that you want to use
-// import {...} from 'firebase/auth';
-// import {...} from 'firebase/database';
-// import {...} from 'firebase/firestore';
-// import {...} from 'firebase/functions';
-// import {...} from 'firebase/storage';
-
-// Initialize Firebase
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 const firebaseConfig = {
   apiKey: "AIzaSyCFTocU3PaXSnfHAvhVcZ-5iHiW4rOhWS0",
   authDomain: "propertyfinderapp-181f8.firebaseapp.com",
@@ -17,8 +12,18 @@ const firebaseConfig = {
   appId: "1:682547983834:web:475e19beed93adf56cbce3",
   measurementId: "G-ZDDHZE0L49"
 };
+// Initialise Firebase
 const app = initializeApp(firebaseConfig);
 
-// For more information on how to access Firebase in your project,
-// see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
-export default app;
+// Firestore
+const db = getFirestore(app);
+
+
+
+
+// Auth
+const auth = getAuth(app);
+
+
+
+export { app, db, auth };

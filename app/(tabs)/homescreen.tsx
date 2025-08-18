@@ -1,15 +1,12 @@
 import React from 'react';
-import { View, Image,Text, Button, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-export default function NotFoundScreen() {
+import { Provider } from 'react-redux';
+import { store } from '@/app/src/store';
+import App2 from './appstore';
+
+export default function App() {
   return (
-    <View >
-            <Button title="sign up"  />
-          </View>
-    
-    
+    <Provider store={store}>
+      <App2 />
+    </Provider>
   );
-
-    
-
-  }
+}
