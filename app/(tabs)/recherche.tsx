@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { store } from '@/app/src/store';
+import { store } from '@/src/store';
 import PropertySearchScreen from './rechstore';
 
 export default function App() {

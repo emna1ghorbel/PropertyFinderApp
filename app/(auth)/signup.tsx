@@ -87,7 +87,7 @@ export default function SignUp() {
           image: image ?? "" 
         };
         setuser("users", userCredential.uid, "user", newUser);
-        router.push("/signin");
+        router.push("../signin");
       })
       .catch((error) => console.error(error));
   };
@@ -220,7 +220,7 @@ export default function SignUp() {
 
             <View style={styles.loginContainer}>
               <Text style={styles.loginText}>Already have an account?</Text>
-              <TouchableOpacity onPress={() => router.push("/signin")}>
+              <TouchableOpacity onPress={() => router.push("../signin")}>
                 <Text style={styles.loginLink}>Log In</Text>
               </TouchableOpacity>
             </View>

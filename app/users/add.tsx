@@ -6,7 +6,7 @@ import { User } from '@/constants/types';
 
 const db = getFirestore();
 
-export async function AddToFirestore(
+export  async function AddToFirestore(
   field: string,
   value: any,
   collection: string,
@@ -48,4 +48,11 @@ export async function setuser(
   } catch (error) {
     console.error("❌ Erreur Firestore hhhhsignup :", error);
   }
+}
+export default function App() {
+  return (
+    <>
+      <div>hello</div>
+    </>
+  );
 }

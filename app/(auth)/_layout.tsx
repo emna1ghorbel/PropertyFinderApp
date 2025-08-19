@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { useTheme } from '@react-navigation/native';
 
 export default function AuthLayout() {
-  const { colors } = useTheme();
+
   
   return (
     <Stack screenOptions={{ headerShown: false }}>

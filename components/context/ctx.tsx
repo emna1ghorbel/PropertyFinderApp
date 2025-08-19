@@ -35,7 +35,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const signin = async (email: string, motDePasse: string): Promise<true | string> => {
   setIsLoading(true);
   try {
-    const user = await signupwithfirebase(email, motDePasse);
+    const user = await signinWithFirebase(email, motDePasse);
 
     setSession(user.uid); 
    

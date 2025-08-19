@@ -14,10 +14,10 @@ import {
 import { actionCreators, initialState, reducer } from '../../components/context/property';
 import { PropertyCard } from '../../components/context/propertycard';
 import Ip from '../id';
-import { useGetPropertiestotalQuery } from '../src/property';
+import { useGetPropertiestotalQuery } from '@/src/property';
 
 const PRIMARY_COLOR = '#03215F';
-const SECONDARY_COLOR = '#4E8CFF';
+
 const LIGHT_GRAY = '#F5F5F5';
 
 export default function PropertySearchScreen() {
@@ -117,7 +117,7 @@ export default function PropertySearchScreen() {
     setData1(fullData);
   };
 const { data, error } = useGetPropertiestotalQuery(1);
-console.log(data)
+
   useEffect(() => {
       if (data) {
        

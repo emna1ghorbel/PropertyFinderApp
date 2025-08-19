@@ -1,31 +1,28 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import { useSession } from '@/components/context/ctx';
+import { Propertyfav } from '@/components/context/propertyfav';
+import { Address, Property, User } from '@/constants/types';
+import { selectFavs, startFavsListener } from '@/src/firestore';
+import { useGetPropertiesQuery } from '@/src/property';
+import { AppDispatch } from '@/src/store';
+import { Ionicons } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import * as Location from "expo-location";
+import { useRouter } from 'expo-router';
+import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
+import filter from 'lodash.filter';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
-import { Propertyfav } from '@/components/context/propertyfav';
-import { Property, User } from '@/constants/types';
-import { Ionicons } from '@expo/vector-icons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { useRouter } from 'expo-router';
-import filter from 'lodash.filter';
-import Animated from 'react-native-reanimated';
-import { actionCreators, initialState, reducer } from '../../components/context/property';
-import { PropertyCard } from '../../components/context/propertycard';
-import Ip from '../id';
-import useGetData from '../users/get';
-import { useGetPropertiesQuery } from '../src/property';
-import { AppDispatch, RootState } from '../src/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSession } from '@/components/context/ctx';
-import { startFavsListener, selectFavs } from '../src/firestore';
-import { LinearGradient } from 'expo-linear-gradient';
+import { PropertyCard } from '../../components/context/propertycard';
+import useGetData from '../users/get';
 const PRIMARY_COLOR = '#03215F';
 const SECONDARY_COLOR = '#4E8CFF';
 const LIGHT_GRAY = '#F5F5F5';
@@ -36,26 +33,85 @@ export default function App2() {
 
   const favs = useSelector(selectFavs); 
 
-  const [state, reducerDispatch] = useReducer(reducer, initialState);
-  const ip = Ip();
+  
+  
   const [page, setPage] = useState(1);
   const [data1, setData1] = useState<Property[]>([]);
   const [fullData, setFullData] = useState<Property[]>([]);
   const [title, setTitle] = useState('');
+    const [addressText, setAddressText] = useState(""); 
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [Address, setAddress] = useState<Address>();
+ const [loadingLocation, setLoadingLocation] = useState(false);
   const { data, error, isLoading } = useGetPropertiesQuery(page, {
     refetchOnMountOrArgChange: true,
   });//data mn store 
+  const db = getFirestore();
+  const data2: User[] = useGetData("users", "user");
+//console.log(String(data2).length);
+  const handleGetLocation = async () => {
+    if (isLoading || !session) return;
+    const userRef = doc(db,"users", session);
 
-  const data2: User[] = useGetData("users", "user");//info user
+    try {
+      setLoadingLocation(true);
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+
+      let loc = await Location.getCurrentPositionAsync({});
+      let geo = await Location.reverseGeocodeAsync({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude
+      });
+
+      if (geo.length > 0) {
+        const info = geo[0];
+        const userAddress: Address = {
+          info: `${info.name || ""} ${info.street || ""}, ${info.city || ""}, ${info.country || ""}`,
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+        };
+
+        setAddress(userAddress);
+        setAddressText(userAddress.info);
+
+        
+
+       
+
+if (true) {
+
+
+  if (true) {
+
+    const userArray = { ...data2[0], address: userAddress };
+
+    await updateDoc(userRef, { "user.0": userArray });
+   
+  }
+} else {
+  console.log("Utilisateur non trouvé");
+}
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
+
 // fav store
   useEffect(() => {
     if (session) {
       const unsubscribe = startFavsListener(session, dispatch);
       return () => unsubscribe();
     }
-  }, [session]);
+  }, );
+  useEffect(() => {
+    
+      handleGetLocation();
+    
+  },[session]);
 // pour le changement de data ily jet mn store
   useEffect(() => {
     if (data) {
@@ -114,7 +170,7 @@ if (sessionLoading || isLoading) {
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Your favorite properties</Text>
-        <TouchableOpacity onPress={() => router.push('/fav')}>
+        <TouchableOpacity onPress={() => router.push('../fav')}>
           <Text style={styles.seeAll}>See all</Text>
         </TouchableOpacity>
       </View>
@@ -141,12 +197,12 @@ if (sessionLoading || isLoading) {
         
           <View style={styles.header}>
             <Text style={styles.welcomeText}>
-              Welcome back, {data2.length > 0 ? data2[0].name : 'User'}
+              Welcome back, {String(data2).length > 0 ? data2[0].name: 'User'}
             </Text>
             <View style={styles.locationRow}>
               <Ionicons name="location-outline" size={20} color={PRIMARY_COLOR} />
               <Text style={styles.locationText}>
-                {data2.length > 0 ? data2[0].address.info : 'Your current location'}
+                {String(data2).length ? data2[0].address.info : 'Your current location'}
               </Text>
             </View>
             <Text style={styles.subtitle}>Find your perfect place</Text>

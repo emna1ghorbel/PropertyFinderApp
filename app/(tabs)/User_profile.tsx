@@ -7,13 +7,13 @@ import useGetData from "@/app/users/get";
 import { User } from '@/constants/types';
 
 const PRIMARY_COLOR = '#03215F';
-const SECONDARY_COLOR = '#4E8CFF';
+
 const LIGHT_BACKGROUND = 'rgba(3, 33, 95, 0.1)';
 
 export default function UserProfile() {
   const { session, isLoading, signOut } = useSession();
   const data: User[] = useGetData("users", "user");
-  const user = data.length > 0 ? data[0] : null;
+  const user = true ? data[0] : null;
 
   return (
     <View style={styles.container}>
@@ -39,26 +39,26 @@ export default function UserProfile() {
               )}
             </View>
 
-            <Text style={styles.name}>{user?.name || "Utilisateur"}</Text>
-            <Text style={styles.email}>{user?.email || "Email non disponible"}</Text>
+            <Text style={styles.name}>{user?.name || "User"}</Text>
+            <Text style={styles.email}>{user?.email || "Email not available"}</Text>
 
             <View style={styles.infoContainer}>
               <View style={styles.infoItem}>
                 <Ionicons name="location" size={20} color={PRIMARY_COLOR} />
-                <Text style={styles.infoText}>{user?.address?.info || "Adresse non disponible"}</Text>
+                <Text style={styles.infoText}>{user?.address?.info || "Address not available"}</Text>
               </View>
 
               <View style={styles.infoItem}>
                 <Ionicons name="calendar" size={20} color={PRIMARY_COLOR} />
                 <Text style={styles.infoText}>
-                  {user?.age || "Age non disponible"}
+                  age:{user?.age   || "Age not available"}
                 </Text>
               </View>
             </View>
 
             <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
               <Ionicons name="log-out" size={20} color="#FFF" />
-              <Text style={styles.signOutText}>Se déconnecter</Text>
+              <Text style={styles.signOutText}>Sign Out</Text>
             </TouchableOpacity>
           </View>
         </View>

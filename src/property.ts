@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Property } from '@/constants/types';
-import Ip from '../id';
-import useGetData from '../users/get';
+import Ip from '@/app/id';
+import useGetData from '@/app/users/get';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 const ip = Ip();
 

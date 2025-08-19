@@ -20,7 +20,5 @@ export const startFavsListener = (userId: string, dispatch: AppDispatch) => {
   return unsubscribe;
 };
 
-export const selectFavs = createSelector(
-  (state: RootState) => state.firebase.favs,
-  (favs) => favs || []
-);
+export const selectFavs = (state: RootState) => state.firebase.favs || [];
+

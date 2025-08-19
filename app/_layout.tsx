@@ -19,11 +19,7 @@ function RootNavigator() {
  console.log('session',session)
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={isLoading}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Loading...</Text>
-        </View>
-      </Stack.Protected>
+      
       
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" />

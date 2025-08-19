@@ -34,7 +34,7 @@ export function PropertyCard({ item }: { item: Property }) {
       await AddToFirestore("fav", item, "users", session ?? "");
     }
     if (isFavorite) {
-      await RemoveFromFavorites(item, "users", "fav", session);
+      await RemoveFromFavorites(item, "users", "fav",session ?? "");
     }
   };
 

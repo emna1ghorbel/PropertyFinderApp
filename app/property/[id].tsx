@@ -60,11 +60,18 @@ export default function FetchDetails() {
   const propertyDetails = property[0];
 
   return (
+    
+   <View style={styles.container} >
+      <Ionicons 
+          name="arrow-back" 
+          size={28} 
+          color="#081957ff" 
+          onPress={router.back}
+          style={styles.backButton}
+        />
     <View style={styles.container}>
-      <TouchableOpacity style={styles.back} onPress={router.back}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-        <Text style={styles.backText}>Go Back</Text>
-      </TouchableOpacity>
+     
+      
 
       <ScrollView
         horizontal
@@ -144,6 +151,7 @@ export default function FetchDetails() {
         </TouchableOpacity>
       </View>
     </View>
+    </View>
   );
 }
 
@@ -151,20 +159,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    paddingTop: 25,
+    paddingTop: 30,
     paddingHorizontal: 10,
   },
-  back: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    borderRadius: 25,
-    borderColor: '#1d3557',
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    backgroundColor: '#a8dadc',
+  backButton: {
+    position: 'absolute',
+    top: 20
+    ,
+    left: 20,
+    zIndex: 10,
+   
+    borderRadius: 20,
+    padding: 5,
   },
   backText: {
     fontSize: 16,

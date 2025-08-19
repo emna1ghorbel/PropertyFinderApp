@@ -2,6 +2,6 @@
 export default  function Ip() {
     
   
-  return '192.168.0.9'; 
+  return '10.254.20.224'; 
 }
 
