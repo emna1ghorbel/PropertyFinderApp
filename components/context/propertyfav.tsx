@@ -50,7 +50,7 @@ export function Propertyfav({ item }: { item: Property }) {
         <AntDesign 
           name="heart" 
           size={20} 
-          color={isFavorite ? "#FFFFFF" : "rgba(255,255,255,0.8)"} 
+          color={isFavorite ? "#FFFFFF" : "#FF385C"} 
         />
       </TouchableOpacity>
 

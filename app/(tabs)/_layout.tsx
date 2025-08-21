@@ -13,7 +13,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="homescreen"
         options={{
-          title: "Accueil", 
+          title: "home", 
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="home" size={24} color='black'  />
           ),
@@ -22,7 +22,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="recherche"
         options={{
-          title: "recherche",
+          title: "search",
           tabBarIcon: ({ color, size }) => (
                 <Search />
           ),
@@ -33,7 +33,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="fav"
         options={{
-          title: "favv",
+          title: "fav",
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="favorite" size={24} color="black" />
           ),
@@ -42,7 +42,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="maps"
         options={{
-          title: "mapss",
+          title: "maps",
           tabBarIcon: ({ color, size }) => (
              <Map />
           ),
